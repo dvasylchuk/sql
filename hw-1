@@ -1,0 +1,113 @@
+create table client (
+client_id int primary key,
+first_name varchar (100),
+last_name varchar (100));
+select * from client;
+insert into client (client_id, first_name, last_name)
+values
+(1, 'john', 'doe'),
+(2, 'jane', 'smith'),
+(3, 'michael', 'johnson'),
+(4, 'emily', 'davis'),
+(5, 'daniel', 'williams');
+create table orders (
+    order_id int primary key,
+    client_id int,
+    order_date date
+);
+
+insert into orders (order_id, client_id, order_date)
+values
+(6, 1, '2023-09-01'),
+(7, 2, '2023-09-02'),
+(8, 3, '2023-09-03'),
+(9, 4, '2023-09-04'),
+(10, 5, '2023-09-05');
+
+create table order_items (
+    order_item_id int primary key,
+    order_id int,
+    product_id int,
+    quantity int
+);
+
+insert into order_items (order_item_id, order_id, product_id, quantity)
+values
+(11, 6, 21, 2),
+(12, 7, 22, 1), 
+(13, 8, 23, 3), 
+(14, 9, 24, 1),
+(15, 10, 25, 2); 
+
+create table payments (
+    payment_id int primary key,
+    client_id int,
+    payment_date date,
+    amount decimal(10, 2)
+);
+
+insert into payments (payment_id, client_id, payment_date, amount)
+values
+(16, 1, '2023-09-06', 1500.00),
+(17, 2, '2023-09-07', 750.00),
+(18, 3, '2023-09-08', 2000.00),
+(19, 4, '2023-09-09', 300.00),
+(20, 5, '2023-09-10', 120.00);
+
+create table products (
+    product_id int primary key,
+    product_name varchar(100)
+);
+
+insert into products (product_id, product_name)
+values
+(21, 'laptop'),
+(22, 'smartphone'),
+(23, 'tablet'),
+(24, 'monitor'),
+(25, 'keyboard');
+
+with payments_1	 as( 
+select c.client_id, c.first_name, c.last_name, o.order_id, o.order_date, p.payment_id, p.payment_date, p.amount, oi.order_item_id, oi.product_id, oi.quantity, pr.product_name, sum(p.amount) as total_payment 
+from client c
+inner join orders o on c.client_id = o.client_id
+inner join payments p on c.client_id = p.client_id
+inner join order_items oi on o.order_id = oi.order_id
+left join products pr on oi.product_id = pr.product_id
+where c.client_id>3
+group by c.client_id, c.first_name, c.last_name, o.order_id, o.order_date, p.payment_id, p.payment_date, p.amount, oi.order_item_id, oi.product_id, oi.quantity, pr.product_name
+)
+select * 
+from payments_1
+order by total_payment desc;
+
+create table orders___1 (
+order_id int primary key,
+client_id int,
+order_date date
+);
+
+insert into orders___1 (order_id, client_id, order_date) values
+(1, 101, '2024-09-01'),
+(2, 102, '2024-09-05'),
+(3, 103, '2024-09-10');
+
+
+select order_date from orders___1
+union all
+select order_date from orders o;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
